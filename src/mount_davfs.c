@@ -815,7 +815,7 @@ check_permissions(dav_args *args)
     }
     if (args->debug & DAV_DBG_CONFIG)
         syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG),
-               "memeber of group %s", args->dav_group);
+               "member of group %s", args->dav_group);
 }
 
 
