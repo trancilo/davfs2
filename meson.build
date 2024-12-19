@@ -1,7 +1,7 @@
 project('davfs2', 'c',
   version : '1.8.0',
   license: 'GPL3+',
-  meson_version : '>= 0.60.0',
+  meson_version : '>= 0.58.0',
   default_options : ['warning_level=1'])
 
 cc = meson.get_compiler('c')
