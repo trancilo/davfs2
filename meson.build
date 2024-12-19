@@ -80,6 +80,29 @@ foreach h : system_headers
   endif
 endforeach
 
+required_functions = [
+  'ftruncate',
+  'mkdir',
+  'select',
+  'setlocale',
+  'fopencookie',
+  'strtoull',
+  'strerror',
+  'strcasecmp',
+  'strdup',
+  'strchr',
+  'strpbrk',
+  'utime'
+]
+
+if meson.version().version_compare('>= 1.3.0')
+  foreach f : required_functions
+    cc.has_function(f, required : true)
+  endforeach
+
+  cc.has_function('canonicalize_file_name')
+endif
+
 configure_file(
   output : 'config.h',
   configuration: cdata,
