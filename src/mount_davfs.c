@@ -1170,15 +1170,27 @@ parse_secrets(dav_args *args)
         read_secrets(args, args->secrets);
     }
 
+    /* Check for a password in an environment variable and override anything from secrets files */
+    const char *env_password = getenv("DAVFS_PASSWORD");
+    if (env_password) {
+        if (args->password)
+            free(args->password);
+        args->password = NULL;
+        args->password = ne_strdup(env_password);
+    }
+
     if (args->cl_username) {
         if (args->username)
             free(args->username);
         args->username = args->cl_username;
         args->cl_username = NULL;
-        if (args->password)
-            free(args->password);
-        args->password = NULL;
-        args->password = dav_user_input_hidden(_("Password: "));
+        /* Clear and prompt for passwords if they came from secrets files, but retain if set via env var */
+        if (!env_password) {
+            if (args->password)
+                free(args->password);
+            args->password = NULL;
+            args->password = dav_user_input_hidden(_("Password: "));
+        }
     }
 
     if (args->askauth && args->useproxy && !args->p_user) {
