@@ -22,7 +22,7 @@
 
 
 AC_PREREQ(2.69)
-AC_INIT(davfs2, 1.7.1, https://github.com/alisarctl/davfs2)
+AC_INIT(davfs2, 1.7.2, https://github.com/alisarctl/davfs2)
 AC_CONFIG_SRCDIR([src/cache.c])
 AC_CONFIG_AUX_DIR([config])
 AM_INIT_AUTOMAKE([foreign])

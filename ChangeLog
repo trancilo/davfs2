@@ -1,5 +1,13 @@
 ChangeLog for davfs2
 --------------------
+2025-08-26
+    * Release 1.7.2
+      Add support to libneon 34, 35
+      Increase buf read size to 64 (fixes read issue on linux 6.16)
+      Allow setting a mount password via DAVFS_PASSWORD
+      Introduce sync_on_lookup option (off by default)
+      Don't compress man pages
+
 2024-11-20 Ali Abdallah (ali.abdallah@suse.com)
     * Release bugfix version 1.7.1
       Hide password prompt when -o username=myname is specified
