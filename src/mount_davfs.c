@@ -276,6 +276,11 @@ main(int argc, char *argv[])
     dav_init_cache(args, mpoint);
 
     int dev = 0;
+    if (args->buf_size && args->buf_size < 64) {
+        WARN("WARNING: Buffer size is too small, increasing to 64");
+        WARN("Please fix your davfs configuration (i.e buf_size to at least 64)");
+        args->buf_size = 64;
+    }
     size_t buf_size = args->buf_size * 1024;
     dav_init_kernel_interface(&dev, &buf_size, url, mpoint, args);
 
@@ -1225,15 +1230,27 @@ parse_secrets(dav_args *args)
         read_secrets(args, args->secrets);
     }
 
+    /* Check for a password in an environment variable and override anything from secrets files */
+    const char *env_password = getenv("DAVFS_PASSWORD");
+    if (env_password) {
+        if (args->password)
+            free(args->password);
+        args->password = NULL;
+        args->password = ne_strdup(env_password);
+    }
+
     if (args->cl_username) {
         if (args->username)
             free(args->username);
         args->username = args->cl_username;
         args->cl_username = NULL;
-        if (args->password)
-            free(args->password);
-        args->password = NULL;
-        args->password = dav_user_input_hidden(_("Password: "));
+        /* Clear and prompt for passwords if they came from secrets files, but retain if set via env var */
+        if (!env_password) {
+            if (args->password)
+                free(args->password);
+            args->password = NULL;
+            args->password = dav_user_input_hidden(_("Password: "));
+        }
     }
 
     if (args->askauth && args->useproxy && !args->p_user) {
@@ -1875,6 +1892,7 @@ new_args(void)
     args->delay_upload = DAV_DELAY_UPLOAD;
     args->gui_optimize = DAV_GUI_OPTIMIZE;
     args->minimize_mem = DAV_MINIMIZE_MEM;
+    args->sync_on_lookup = 0;
 
     args->debug = 0;
     args->neon_debug = 0;
@@ -2002,6 +2020,8 @@ log_dbg_config(dav_args *args)
            "  gui_optimize: %i", args->gui_optimize);
     syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG),
            "  minimize_mem: %i", args->minimize_mem);
+    syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG),
+           "  sync_on_lookup: %i", args->sync_on_lookup);
     syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG),
            "  debug: %#x", args->debug);
     syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG),
@@ -2337,6 +2357,8 @@ read_config(dav_args *args, const char * filename, int system)
                 args->gui_optimize = arg_to_int(parmv[1], 10, parmv[0]);
             } else if (strcmp(parmv[0], "minimize_mem") == 0) {
                 args->minimize_mem = arg_to_int(parmv[1], 10, parmv[0]);
+            } else if (strcmp(parmv[0], "sync_on_lookup") == 0) {
+                args->sync_on_lookup = arg_to_int(parmv[1], 10, parmv[0]);
             } else if (strcmp(parmv[0], "debug") == 0) {
                 args->debug |= debug_opts(parmv[1]);
                 args->neon_debug |= debug_opts_neon(parmv[1]);

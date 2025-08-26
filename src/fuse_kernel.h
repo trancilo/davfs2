@@ -136,7 +136,8 @@ enum fuse_opcode {
 
 /* The read buffer is required to be at least 8k, but may be much larger */
 /* 2009-04-14, increased size of FUSE_MIN_READ_BUFFER, Werner Baumann */
-#define FUSE_MIN_READ_BUFFER 16384
+/* 2025-08-26, increased size of read buffer to 64 */
+#define FUSE_MIN_READ_BUFFER 65536
 
 struct fuse_entry_out {
 	__u64	nodeid;		/* Inode ID */

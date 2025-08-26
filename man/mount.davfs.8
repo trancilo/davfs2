@@ -462,6 +462,14 @@ WebDAV resource a subdirectory is created.
 .SH ENVIRONMENT
 
 .TP
+.B DAVFS_PASSWORD
+If set, this environment variable will be used as the password for WebDAV
+authentication if no password is specified via the command line option and
+in preference to anything found in  secrets files. This allows for scripted
+mounting without storing passwords in files or exposing them in command
+line arguments; especially relevant in the context of CI runners.
+
+.TP
 .B https_proxy http_proxy all_proxy
 If no proxy is defined in the configuration file the value is taken from
 this environment variables. The proxy may be given with or without scheme
