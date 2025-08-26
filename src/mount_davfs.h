@@ -99,6 +99,7 @@ typedef struct {
     int delay_upload;         /* User config file, system config file */
     int gui_optimize;         /* User config file, system config file */
     int minimize_mem;         /* User config file, system config file */
+    int sync_on_lookup;
     /* Debugging */
     int debug;                /* User config file, system config file */
     int neon_debug;           /* User config file, system config file */

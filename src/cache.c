@@ -163,6 +163,8 @@ static time_t file_refresh;
 /* Upload file that many seconds after closing. */
 static time_t delay_upload;
 
+static int sync_on_lookup;
+
 /* Optimize file updates for graphical user interfaces = use PROPFIND to get
    the Last-Modified-dates for the whole directory instead of
    GET If-Modified-Since for single files. */
@@ -600,6 +602,7 @@ dav_init_cache(const dav_args *args, const char *mpoint)
     dir_refresh = args->dir_refresh;
     file_refresh = args->file_refresh;
     delay_upload = args->delay_upload;
+    sync_on_lookup = args->sync_on_lookup;
     gui_optimize = args->gui_optimize;
     minimize_mem = args->minimize_mem;
     retry = dir_refresh;
@@ -1022,7 +1025,7 @@ dav_lookup(dav_node **nodep, dav_node *parent, const char *name, uid_t uid)
 
         if (is_open(*nodep))
             attr_from_cache_file(*nodep);
-        else if (!is_dirty(*nodep) && !is_backup(*nodep)) {
+        else if (sync_on_lookup && !is_dirty(*nodep) && !is_backup(*nodep)) {
             int ret;
 
             dav_props *props = NULL;

@@ -1837,6 +1837,7 @@ new_args(void)
     args->delay_upload = DAV_DELAY_UPLOAD;
     args->gui_optimize = DAV_GUI_OPTIMIZE;
     args->minimize_mem = DAV_MINIMIZE_MEM;
+    args->sync_on_lookup = 0;
 
     args->debug = 0;
     args->neon_debug = 0;
@@ -1964,6 +1965,8 @@ log_dbg_config(dav_args *args)
            "  gui_optimize: %i", args->gui_optimize);
     syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG),
            "  minimize_mem: %i", args->minimize_mem);
+    syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG),
+           "  sync_on_lookup: %i", args->sync_on_lookup);
     syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG),
            "  debug: %#x", args->debug);
     syslog(LOG_MAKEPRI(LOG_DAEMON, LOG_DEBUG),
@@ -2299,6 +2302,8 @@ read_config(dav_args *args, const char * filename, int system)
                 args->gui_optimize = arg_to_int(parmv[1], 10, parmv[0]);
             } else if (strcmp(parmv[0], "minimize_mem") == 0) {
                 args->minimize_mem = arg_to_int(parmv[1], 10, parmv[0]);
+            } else if (strcmp(parmv[0], "sync_on_lookup") == 0) {
+                args->sync_on_lookup = arg_to_int(parmv[1], 10, parmv[0]);
             } else if (strcmp(parmv[0], "debug") == 0) {
                 args->debug |= debug_opts(parmv[1]);
                 args->neon_debug |= debug_opts_neon(parmv[1]);
