@@ -259,6 +259,11 @@ main(int argc, char *argv[])
     dav_init_cache(args, mpoint);
 
     int dev = 0;
+    if (args->buf_size && args->buf_size < 64) {
+        WARN("WARNING: Buffer size is too small, increasing to 64");
+        WARN("Please fix your davfs configuration (i.e buf_size to at least 64)");
+        args->buf_size = 64;
+    }
     size_t buf_size = args->buf_size * 1024;
     dav_init_kernel_interface(&dev, &buf_size, url, mpoint, args);
 
